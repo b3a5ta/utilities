@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON / Markdown Visualizer</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --surface-3: #eef4fb;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #d7e1ed;
+      --border-strong: #b8c7d9;
+      --accent: #2563eb;
+      --accent-2: #0f766e;
+      --accent-soft: #e7f0ff;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --success: #166534;
+      --success-soft: #ecfdf3;
+      --warning: #a16207;
+      --warning-soft: #fefce8;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      --radius: 8px;
+      --topbar-h: 58px;
+      --left-w: 42%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 247, 251, 0.96)),
+        radial-gradient(circle at 12% 0%, rgba(15, 118, 110, 0.10), transparent 26%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 650;
+      line-height: 1;
+      transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover {
+      border-color: #93b7e8;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.10);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.18);
+      outline-offset: 1px;
+      border-color: var(--accent);
+    }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: var(--topbar-h) minmax(0, 1fr);
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-width: 0;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 5;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff, #dbeafe);
+      color: #1d4ed8;
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.1;
+      font-weight: 760;
+    }
+
+    .brand-text p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .mode-tabs {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      min-width: 0;
+    }
+
+    .mode-tabs button {
+      border: 0;
+      border-right: 1px solid var(--border);
+      border-radius: 0;
+      min-width: 92px;
+      box-shadow: none;
+    }
+
+    .mode-tabs button:last-child {
+      border-right: 0;
+    }
+
+    .mode-tabs button.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(300px, var(--left-w)) 10px minmax(360px, 1fr);
+      gap: 0;
+      width: 100%;
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-bar {
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff, var(--surface-2));
+    }
+
+    .panel-title {
+      min-width: 0;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.15;
+      font-weight: 760;
+    }
+
+    .panel-title span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chip-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .chip {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--muted);
+      padding: 4px 8px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .panel-content {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .editor-content {
+      grid-template-rows: minmax(0, 1fr) auto minmax(28px, auto);
+    }
+
+    .preview-content {
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    textarea {
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      resize: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fbfdff;
+      color: var(--text);
+      padding: 12px;
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      tab-size: 2;
+      overflow: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .toolbar,
+    .search-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .btn-primary {
+      border-color: #1d4ed8;
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      border-color: #1d4ed8;
+      background: #1d4ed8;
+    }
+
+    .btn-soft {
+      border-color: #bfdbfe;
+      background: var(--accent-soft);
+      color: #1d4ed8;
+    }
+
+    .btn-danger {
+      border-color: #fecaca;
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      border-color: #fca5a5;
+      background: #fee2e2;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      min-height: 28px;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .message > div {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius);
+      padding: 6px 9px;
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    .message .success {
+      border: 1px solid #bbf7d0;
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .message .error {
+      border: 1px solid #fecaca;
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .message .note {
+      border: 1px solid #fde68a;
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .search-row input {
+      flex: 1 1 220px;
+      min-width: 160px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: var(--text);
+      padding: 0 10px;
+      font-size: 13px;
+    }
+
+    .viewer {
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fbfdff;
+      padding: 10px;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      padding: 6px 2px;
+    }
+
+    .json-viewer {
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .json-node,
+    .json-line {
+      min-width: max-content;
+    }
+
+    .json-row {
+      min-height: 23px;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 1px 4px 1px 0;
+      border-radius: 5px;
+      white-space: pre;
+    }
+
+    .json-row:hover {
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    .json-children {
+      margin-left: 18px;
+      border-left: 1px dashed rgba(100, 116, 139, 0.34);
+      padding-left: 8px;
+    }
+
+    .json-children.is-hidden,
+    .json-tail.is-hidden {
+      display: none;
+    }
+
+    .toggle {
+      width: 21px;
+      height: 21px;
+      flex: 0 0 21px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      padding: 0;
+      background: transparent;
+      color: var(--muted);
+      box-shadow: none;
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      font-weight: 800;
+    }
+
+    .toggle:hover {
+      border-color: var(--border);
+      background: var(--surface-3);
+      box-shadow: none;
+    }
+
+    .toggle-spacer {
+      width: 21px;
+      flex: 0 0 21px;
+    }
+
+    .json-key {
+      color: #0f4c81;
+      font-weight: 700;
+    }
+
+    .json-string {
+      color: #15803d;
+    }
+
+    .json-number {
+      color: #b45309;
+    }
+
+    .json-boolean {
+      color: #7c3aed;
+    }
+
+    .json-null {
+      color: #dc2626;
+      font-style: italic;
+    }
+
+    .json-punctuation {
+      color: #334155;
+    }
+
+    .json-summary {
+      color: var(--muted);
+      font-size: 12px;
+      margin-left: 7px;
+    }
+
+    mark {
+      background: #fff3b0;
+      color: #111827;
+      border-radius: 4px;
+      padding: 0 2px;
+    }
+
+    .markdown-viewer {
+      padding: 0;
+      background: #eef3f8;
+    }
+
+    .markdown-page {
+      width: 100%;
+      min-height: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 22px 24px;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+
+    .markdown-body {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.68;
+      overflow-wrap: anywhere;
+    }
+
+    .markdown-body > *:first-child {
+      margin-top: 0;
+    }
+
+    .markdown-body > *:last-child {
+      margin-bottom: 0;
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4,
+    .markdown-body h5,
+    .markdown-body h6 {
+      color: #0f172a;
+      line-height: 1.25;
+      margin: 1rem 0 0.45rem;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .markdown-body h1 {
+      font-size: 1.45rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .markdown-body h2 {
+      font-size: 1.22rem;
+      padding-bottom: 0.18rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.06rem;
+    }
+
+    .markdown-body h4,
+    .markdown-body h5,
+    .markdown-body h6 {
+      font-size: 0.96rem;
+    }
+
+    .markdown-body p,
+    .markdown-body ul,
+    .markdown-body ol,
+    .markdown-body blockquote,
+    .markdown-body table,
+    .markdown-body pre {
+      margin: 0 0 0.85rem;
+    }
+
+    .markdown-body ul,
+    .markdown-body ol {
+      padding-left: 1.35rem;
+    }
+
+    .markdown-body li + li {
+      margin-top: 0.24rem;
+    }
+
+    .markdown-body a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    .markdown-body a:hover {
+      text-decoration: underline;
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid var(--accent-2);
+      border-radius: var(--radius);
+      background: #f1f8f6;
+      color: #334155;
+      padding: 10px 12px;
+    }
+
+    .markdown-body code {
+      border: 1px solid #dbeafe;
+      border-radius: 6px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      padding: 2px 5px;
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      font-size: 0.92em;
+    }
+
+    .markdown-body pre {
+      overflow: auto;
+      border: 1px solid #1e293b;
+      border-radius: var(--radius);
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 13px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .markdown-body pre code {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      white-space: pre;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-collapse: collapse;
+      font-size: 13px;
+      display: block;
+      overflow-x: auto;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .markdown-body th {
+      background: #eff6ff;
+      color: #0f172a;
+      font-weight: 760;
+    }
+
+    .markdown-body hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 1.2rem 0;
+    }
+
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 10px 0;
+    }
+
+    .markdown-body input[type="checkbox"] {
+      margin-right: 8px;
+      accent-color: var(--accent);
+    }
+
+    .resizer {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: col-resize;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .resizer::before {
+      content: "";
+      width: 4px;
+      height: calc(100% - 14px);
+      border-radius: 999px;
+      background: #c7d7eb;
+      transition: background 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .resizer:hover::before,
+    .resizer.active::before {
+      background: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.13);
+    }
+
+    @media (max-width: 980px) {
+      body {
+        overflow: auto;
+      }
+
+      .app {
+        height: auto;
+        min-height: 100vh;
+        grid-template-rows: auto auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        flex-wrap: wrap;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .workspace {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .resizer {
+        display: none;
+      }
+
+      .panel {
+        min-height: 420px;
+      }
+
+      .editor-content {
+        min-height: 350px;
+      }
+
+      .preview-content {
+        min-height: 390px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 8px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .brand-text p {
+        white-space: normal;
+      }
+
+      .mode-tabs,
+      .mode-tabs button {
+        width: 100%;
+      }
+
+      .workspace {
+        padding: 8px;
+      }
+
+      .panel-bar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .chip-row {
+        justify-content: flex-start;
+      }
+
+      .toolbar button {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+      }
+
+      .search-row button {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+
+      .search-row input {
+        flex-basis: 100%;
+      }
+
+      .markdown-page {
+        padding: 16px;
+        border-left: 0;
+        border-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">{ }</div>
+        <div class="brand-text">
+          <h1>JSON / Markdown Visualizer</h1>
+          <p id="modeHint">Paste JSON, format it, and inspect the tree.</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="mode-tabs" aria-label="Choose visualizer mode">
+          <button class="active" id="jsonModeBtn" type="button">JSON</button>
+          <button id="markdownModeBtn" type="button">Markdown</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="workspace" id="workspace">
+      <section class="panel" aria-labelledby="inputTitle">
+        <div class="panel-bar">
+          <div class="panel-title">
+            <h2 id="inputTitle">JSON Input</h2>
+            <span id="inputHelp">Paste or edit JSON here.</span>
+          </div>
+          <div class="chip-row">
+            <span class="chip" id="inputStats">0 chars</span>
+          </div>
+        </div>
+
+        <div class="panel-content editor-content">
+          <textarea id="mainInput" spellcheck="false" aria-label="Input editor"></textarea>
+
+          <div class="toolbar" id="jsonToolbar">
+            <button class="btn-primary" id="renderJsonBtn" type="button">Render</button>
+            <button class="btn-soft" id="formatJsonBtn" type="button">Format</button>
+            <button id="minifyJsonBtn" type="button">Minify</button>
+            <button id="copyJsonBtn" type="button">Copy</button>
+            <button id="sampleJsonBtn" type="button">Sample</button>
+            <button id="expandAllBtn" type="button">Expand</button>
+            <button id="collapseAllBtn" type="button">Collapse</button>
+            <button class="btn-danger" id="clearJsonBtn" type="button">Clear</button>
+          </div>
+
+          <div class="toolbar hidden" id="markdownToolbar">
+            <button class="btn-primary" id="renderMarkdownBtn" type="button">Render</button>
+            <button id="copyMarkdownBtn" type="button">Copy</button>
+            <button id="sampleMarkdownBtn" type="button">Sample</button>
+            <button id="toggleWrapBtn" type="button">Wrap On</button>
+            <button class="btn-danger" id="clearMarkdownBtn" type="button">Clear</button>
+          </div>
+
+          <div class="message" id="messageBox" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <div class="resizer" id="resizer" role="separator" aria-orientation="vertical" aria-label="Resize editor and preview panels" tabindex="0"></div>
+
+      <section class="panel" aria-labelledby="outputTitle">
+        <div class="panel-bar">
+          <div class="panel-title">
+            <h2 id="outputTitle">JSON Tree</h2>
+            <span id="outputHelp">Search keys, paths, summaries, and values.</span>
+          </div>
+          <div class="chip-row">
+            <span class="chip" id="typeInfo">Type: -</span>
+            <span class="chip" id="sizeInfo">Nodes: 0</span>
+            <span class="chip" id="matchInfo">Matches: 0</span>
+          </div>
+        </div>
+
+        <div class="panel-content preview-content">
+          <div class="search-row">
+            <input id="searchInput" type="search" placeholder="Search output..." aria-label="Search rendered output" />
+            <button id="clearSearchBtn" type="button">Clear Search</button>
+          </div>
+
+          <div id="viewer" class="viewer json-viewer">
+            <div class="empty-state">Rendered output will appear here.</div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const els = {
+      modeHint: document.getElementById("modeHint"),
+      jsonModeBtn: document.getElementById("jsonModeBtn"),
+      markdownModeBtn: document.getElementById("markdownModeBtn"),
+      inputTitle: document.getElementById("inputTitle"),
+      inputHelp: document.getElementById("inputHelp"),
+      outputTitle: document.getElementById("outputTitle"),
+      outputHelp: document.getElementById("outputHelp"),
+      inputStats: document.getElementById("inputStats"),
+      typeInfo: document.getElementById("typeInfo"),
+      sizeInfo: document.getElementById("sizeInfo"),
+      matchInfo: document.getElementById("matchInfo"),
+      mainInput: document.getElementById("mainInput"),
+      searchInput: document.getElementById("searchInput"),
+      clearSearchBtn: document.getElementById("clearSearchBtn"),
+      viewer: document.getElementById("viewer"),
+      messageBox: document.getElementById("messageBox"),
+      jsonToolbar: document.getElementById("jsonToolbar"),
+      markdownToolbar: document.getElementById("markdownToolbar"),
+      workspace: document.getElementById("workspace"),
+      resizer: document.getElementById("resizer"),
+      renderJsonBtn: document.getElementById("renderJsonBtn"),
+      formatJsonBtn: document.getElementById("formatJsonBtn"),
+      minifyJsonBtn: document.getElementById("minifyJsonBtn"),
+      copyJsonBtn: document.getElementById("copyJsonBtn"),
+      sampleJsonBtn: document.getElementById("sampleJsonBtn"),
+      expandAllBtn: document.getElementById("expandAllBtn"),
+      collapseAllBtn: document.getElementById("collapseAllBtn"),
+      clearJsonBtn: document.getElementById("clearJsonBtn"),
+      renderMarkdownBtn: document.getElementById("renderMarkdownBtn"),
+      copyMarkdownBtn: document.getElementById("copyMarkdownBtn"),
+      sampleMarkdownBtn: document.getElementById("sampleMarkdownBtn"),
+      toggleWrapBtn: document.getElementById("toggleWrapBtn"),
+      clearMarkdownBtn: document.getElementById("clearMarkdownBtn")
+    };
+
+    const jsonSample = `{
+  "candidate": {
+    "name": "Sabii",
+    "role": "Software Developer",
+    "active": true,
+    "experienceYears": 3,
+    "skills": ["HTML", "CSS", "JavaScript", "Rust"],
+    "contact": {
+      "email": "sabii@example.com",
+      "location": "India"
+    }
+  },
+  "projects": [
+    {
+      "title": "Interview Platform",
+      "status": "In Progress",
+      "score": 92
+    },
+    {
+      "title": "Analytics Dashboard",
+      "status": "Completed",
+      "score": 88
+    }
+  ],
+  "meta": {
+    "createdAt": "2026-03-18",
+    "notes": null
+  }
+}`;
+
+    const markdownSample = `# Product Release Notes
+
+Welcome to the **Markdown Visualizer**. Paste Markdown on the left and review the rendered document on the right.
+
+## Highlights
+- Clean preview surface
+- Code blocks, tables, quotes, lists, and links
+- Search that highlights rendered text
+- Responsive split layout
+
+## Example Code
+\`\`\`js
+function greet(name) {
+  return \`Hello, \${name}\`;
+}
+\`\`\`
+
+## Task List
+- [x] JSON tree
+- [x] Markdown preview
+- [x] Responsive layout
+- [ ] File import
+
+## Quote
+> Markdown should be readable without getting in the way.
+
+## Table
+| Feature | Status |
+|---|---|
+| Render | Ready |
+| Search | Ready |
+| Copy | Ready |`;
+
+    const state = {
+      mode: "json",
+      jsonText: jsonSample,
+      markdownText: markdownSample,
+      leftPercent: 42,
+      wrap: true,
+      renderTimer: null
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeRegExp(value) {
+      return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function highlightText(value, query) {
+      const text = String(value);
+      const term = String(query || "").trim();
+      if (!term) return escapeHtml(text);
+      const regex = new RegExp(escapeRegExp(term), "gi");
+      let output = "";
+      let lastIndex = 0;
+      text.replace(regex, (match, offset) => {
+        output += escapeHtml(text.slice(lastIndex, offset));
+        output += `<mark>${escapeHtml(match)}</mark>`;
+        lastIndex = offset + match.length;
+        return match;
+      });
+      return output + escapeHtml(text.slice(lastIndex));
+    }
+
+    function countMatches(text, query) {
+      const term = String(query || "").trim();
+      if (!term) return 0;
+      const matches = String(text).match(new RegExp(escapeRegExp(term), "gi"));
+      return matches ? matches.length : 0;
+    }
+
+    function setMessage(text, type = "success") {
+      clearTimeout(setMessage.timer);
+      els.messageBox.innerHTML = text ? `<div class="${type}">${escapeHtml(text)}</div>` : "";
+      if (text && type !== "error") {
+        setMessage.timer = setTimeout(() => {
+          els.messageBox.innerHTML = "";
+        }, 2400);
+      }
+    }
+
+    function updateInputStats() {
+      const value = els.mainInput.value;
+      const lines = value ? value.split(/\r?\n/).length : 0;
+      els.inputStats.textContent = `${value.length} chars / ${lines} lines`;
+    }
+
+    function rememberActiveText() {
+      if (state.mode === "json") {
+        state.jsonText = els.mainInput.value;
+      } else {
+        state.markdownText = els.mainInput.value;
+      }
+    }
+
+    function scheduleRender() {
+      clearTimeout(state.renderTimer);
+      state.renderTimer = setTimeout(() => {
+        if (state.mode === "json") {
+          renderJson(false);
+        } else {
+          renderMarkdown(false);
+        }
+      }, 170);
+    }
+
+    function setOutputMeta(type, size, matches) {
+      els.typeInfo.textContent = `Type: ${type}`;
+      els.sizeInfo.textContent = size;
+      els.matchInfo.textContent = `Matches: ${matches}`;
+    }
+
+    function getJsonType(value) {
+      if (value === null) return "null";
+      if (Array.isArray(value)) return "array";
+      return typeof value;
+    }
+
+    function getJsonSummary(value) {
+      if (Array.isArray(value)) return `Array(${value.length})`;
+      if (value && typeof value === "object") return `Object(${Object.keys(value).length})`;
+      return "";
+    }
+
+    function countJsonNodes(value) {
+      if (Array.isArray(value)) {
+        return value.reduce((sum, item) => sum + countJsonNodes(item), 1);
+      }
+      if (value && typeof value === "object") {
+        return Object.keys(value).reduce((sum, key) => sum + countJsonNodes(value[key]), 1);
+      }
+      return 1;
+    }
+
+    function primitiveLabel(value) {
+      const type = getJsonType(value);
+      if (type === "string") return value;
+      if (type === "null") return "null";
+      return String(value);
+    }
+
+    function renderKey(key, query) {
+      if (key === null) return "";
+      return `<span class="json-key">"${highlightText(String(key), query)}"</span><span class="json-punctuation">: </span>`;
+    }
+
+    function renderPrimitiveValue(value, query) {
+      const type = getJsonType(value);
+      if (type === "string") {
+        return `<span class="json-string">"${highlightText(value, query)}"</span>`;
+      }
+      if (type === "number") {
+        return `<span class="json-number">${highlightText(String(value), query)}</span>`;
+      }
+      if (type === "boolean") {
+        return `<span class="json-boolean">${highlightText(String(value), query)}</span>`;
+      }
+      if (type === "null") {
+        return `<span class="json-null">null</span>`;
+      }
+      return highlightText(String(value), query);
+    }
+
+    function createJsonNode(key, value, path, level, query) {
+      const type = getJsonType(value);
+      const searchBits = [path, key === null ? "" : key, type, type === "object" || type === "array" ? getJsonSummary(value) : primitiveLabel(value)];
+      let ownMatches = countMatches(searchBits.join(" "), query);
+
+      if (type !== "object" && type !== "array") {
+        const line = document.createElement("div");
+        line.className = "json-line";
+        line.innerHTML = `
+          <div class="json-row" title="${escapeHtml(path)}">
+            <span class="toggle-spacer"></span>
+            <span>${renderKey(key, query)}${renderPrimitiveValue(value, query)}</span>
+          </div>`;
+        return { element: line, matches: ownMatches };
+      }
+
+      const isArray = type === "array";
+      const entries = isArray ? value.map((item, index) => [index, item]) : Object.entries(value);
+      const childResults = entries.map(([childKey, childValue]) => {
+        const childPath = isArray ? `${path}[${childKey}]` : `${path}.${childKey}`;
+        return createJsonNode(childKey, childValue, childPath, level + 1, query);
+      });
+      const childMatches = childResults.reduce((sum, item) => sum + item.matches, 0);
+      const totalMatches = ownMatches + childMatches;
+      const expanded = level === 0 || Boolean(query && totalMatches);
+      const node = document.createElement("div");
+      node.className = "json-node";
+      if (level === 0) node.dataset.root = "true";
+
+      const toggle = document.createElement("button");
+      toggle.className = "toggle";
+      toggle.type = "button";
+      toggle.textContent = expanded ? "-" : "+";
+      toggle.setAttribute("aria-label", expanded ? "Collapse node" : "Expand node");
+
+      const row = document.createElement("div");
+      row.className = "json-row";
+      row.title = path;
+      row.appendChild(toggle);
+
+      const content = document.createElement("span");
+      const open = isArray ? "[" : "{";
+      content.innerHTML = `${renderKey(key, query)}<span class="json-punctuation">${open}</span><span class="json-summary">${escapeHtml(getJsonSummary(value))}</span>`;
+      row.appendChild(content);
+
+      const children = document.createElement("div");
+      children.className = "json-children";
+      childResults.forEach((child) => children.appendChild(child.element));
+
+      const tail = document.createElement("div");
+      tail.className = "json-row json-tail";
+      tail.innerHTML = `<span class="toggle-spacer"></span><span class="json-punctuation">${isArray ? "]" : "}"}</span>`;
+
+      function setExpanded(nextExpanded) {
+        children.classList.toggle("is-hidden", !nextExpanded);
+        tail.classList.toggle("is-hidden", !nextExpanded);
+        toggle.textContent = nextExpanded ? "-" : "+";
+        toggle.setAttribute("aria-label", nextExpanded ? "Collapse node" : "Expand node");
+      }
+
+      toggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setExpanded(children.classList.contains("is-hidden"));
+      });
+
+      row.addEventListener("dblclick", () => {
+        setExpanded(children.classList.contains("is-hidden"));
+      });
+
+      node.appendChild(row);
+      node.appendChild(children);
+      node.appendChild(tail);
+      setExpanded(expanded);
+      return { element: node, matches: totalMatches };
+    }
+
+    function getJsonErrorLocation(message, text) {
+      const positionMatch = String(message).match(/position\s+(\d+)/i);
+      if (!positionMatch) return "";
+      const position = Number(positionMatch[1]);
+      const before = text.slice(0, position);
+      const line = before.split(/\r?\n/).length;
+      const column = before.length - before.lastIndexOf("\n");
+      return ` at line ${line}, column ${column}`;
+    }
+
+    function renderJson(showSuccess = false) {
+      const raw = els.mainInput.value;
+      const query = els.searchInput.value.trim();
+      els.viewer.className = "viewer json-viewer";
+      updateInputStats();
+
+      if (!raw.trim()) {
+        els.viewer.innerHTML = `<div class="empty-state">Paste JSON on the left, then render it here.</div>`;
+        setOutputMeta("-", "Nodes: 0", 0);
+        setMessage("");
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        const result = createJsonNode(null, parsed, "$", 0, query);
+        els.viewer.replaceChildren(result.element);
+        setOutputMeta(getJsonType(parsed), `Nodes: ${countJsonNodes(parsed)}`, result.matches);
+        if (showSuccess) setMessage("JSON rendered.");
+      } catch (error) {
+        const location = getJsonErrorLocation(error.message, raw);
+        els.viewer.innerHTML = `<div class="empty-state">Fix the JSON error to see the tree.</div>`;
+        setOutputMeta("-", "Nodes: 0", 0);
+        setMessage(`Invalid JSON${location}: ${error.message}`, "error");
+      }
+    }
+
+    function parseJsonFromEditor() {
+      return JSON.parse(els.mainInput.value);
+    }
+
+    function formatJson() {
+      try {
+        els.mainInput.value = JSON.stringify(parseJsonFromEditor(), null, 2);
+        state.jsonText = els.mainInput.value;
+        renderJson(false);
+        setMessage("JSON formatted.");
+      } catch (error) {
+        setMessage(`Cannot format invalid JSON: ${error.message}`, "error");
+      }
+    }
+
+    function minifyJson() {
+      try {
+        els.mainInput.value = JSON.stringify(parseJsonFromEditor());
+        state.jsonText = els.mainInput.value;
+        renderJson(false);
+        setMessage("JSON minified.");
+      } catch (error) {
+        setMessage(`Cannot minify invalid JSON: ${error.message}`, "error");
+      }
+    }
+
+    function expandAllJson() {
+      els.viewer.querySelectorAll(".json-children, .json-tail").forEach((item) => item.classList.remove("is-hidden"));
+      els.viewer.querySelectorAll(".toggle").forEach((button) => {
+        button.textContent = "-";
+        button.setAttribute("aria-label", "Collapse node");
+      });
+    }
+
+    function collapseAllJson() {
+      els.viewer.querySelectorAll(".json-node:not([data-root='true'])").forEach((node) => {
+        node.querySelector(":scope > .json-children")?.classList.add("is-hidden");
+        node.querySelector(":scope > .json-tail")?.classList.add("is-hidden");
+        const button = node.querySelector(":scope > .json-row .toggle");
+        if (button) {
+          button.textContent = "+";
+          button.setAttribute("aria-label", "Expand node");
+        }
+      });
+      const rootButton = els.viewer.querySelector(".json-node[data-root='true'] > .json-row .toggle");
+      if (rootButton) rootButton.textContent = "-";
+    }
+
+    function safeUrl(url) {
+      const value = String(url || "").trim();
+      if (/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(value)) {
+        return value;
+      }
+      return "#";
+    }
+
+    function parseInlineMarkdown(text) {
+      const codeTokens = [];
+      let html = escapeHtml(text);
+
+      html = html.replace(/`([^`]+)`/g, (_, code) => {
+        const token = `@@CODE_${codeTokens.length}@@`;
+        codeTokens.push(`<code>${code}</code>`);
+        return token;
+      });
+
+      html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, alt, src) => {
+        return `<img src="${escapeHtml(safeUrl(src))}" alt="${alt}" />`;
+      });
+      html = html.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, label, href) => {
+        return `<a href="${escapeHtml(safeUrl(href))}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      });
+      html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+      html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+      html = html.replace(/_([^_]+)_/g, "<em>$1</em>");
+      html = html.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+
+      codeTokens.forEach((token, index) => {
+        html = html.replace(`@@CODE_${index}@@`, token);
+      });
+      return html;
+    }
+
+    function isTableDivider(line) {
+      return /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(line.trim());
+    }
+
+    function splitTableRow(line) {
+      const trimmed = line.trim().replace(/^\|/, "").replace(/\|$/, "");
+      return trimmed.split("|").map((cell) => cell.trim());
+    }
+
+    function renderMarkdownToHtml(markdown) {
+      const lines = markdown.replace(/\r\n/g, "\n").split("\n");
+      const blocks = [];
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        if (!trimmed) {
+          i += 1;
+          continue;
+        }
+
+        const fence = trimmed.match(/^(```|~~~)\s*(.*)$/);
+        if (fence) {
+          const fenceToken = fence[1];
+          const lang = fence[2].trim();
+          const codeLines = [];
+          i += 1;
+          while (i < lines.length && !lines[i].trim().startsWith(fenceToken)) {
+            codeLines.push(lines[i]);
+            i += 1;
+          }
+          if (i < lines.length) i += 1;
+          blocks.push(`<pre><code${lang ? ` class="language-${escapeHtml(lang)}"` : ""}>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+          continue;
+        }
+
+        if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+          blocks.push("<hr />");
+          i += 1;
+          continue;
+        }
+
+        const heading = line.match(/^(#{1,6})\s+(.+)$/);
+        if (heading) {
+          const level = heading[1].length;
+          blocks.push(`<h${level}>${parseInlineMarkdown(heading[2].trim())}</h${level}>`);
+          i += 1;
+          continue;
+        }
+
+        if (/^>\s?/.test(line)) {
+          const quoteLines = [];
+          while (i < lines.length && /^>\s?/.test(lines[i])) {
+            quoteLines.push(lines[i].replace(/^>\s?/, ""));
+            i += 1;
+          }
+          const quoteHtml = quoteLines.join("\n").split(/\n{2,}/).map((chunk) => `<p>${parseInlineMarkdown(chunk.replace(/\n/g, " "))}</p>`).join("");
+          blocks.push(`<blockquote>${quoteHtml}</blockquote>`);
+          continue;
+        }
+
+        if (i + 1 < lines.length && /^\|?(.+\|)+.+\|?$/.test(trimmed) && isTableDivider(lines[i + 1])) {
+          const headers = splitTableRow(line);
+          const rows = [];
+          i += 2;
+          while (i < lines.length && /^\|?(.+\|)+.+\|?$/.test(lines[i].trim())) {
+            rows.push(splitTableRow(lines[i]));
+            i += 1;
+          }
+          const thead = `<thead><tr>${headers.map((cell) => `<th>${parseInlineMarkdown(cell)}</th>`).join("")}</tr></thead>`;
+          const tbody = `<tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${parseInlineMarkdown(cell)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+          blocks.push(`<table>${thead}${tbody}</table>`);
+          continue;
+        }
+
+        if (/^[-*+]\s+\[( |x|X)\]\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^[-*+]\s+\[( |x|X)\]\s+/.test(lines[i])) {
+            const match = lines[i].match(/^[-*+]\s+\[( |x|X)\]\s+(.+)$/);
+            items.push(`<li><label><input type="checkbox" disabled ${/x/i.test(match[1]) ? "checked" : ""} />${parseInlineMarkdown(match[2])}</label></li>`);
+            i += 1;
+          }
+          blocks.push(`<ul>${items.join("")}</ul>`);
+          continue;
+        }
+
+        if (/^[-*+]\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^[-*+]\s+/.test(lines[i])) {
+            items.push(`<li>${parseInlineMarkdown(lines[i].replace(/^[-*+]\s+/, ""))}</li>`);
+            i += 1;
+          }
+          blocks.push(`<ul>${items.join("")}</ul>`);
+          continue;
+        }
+
+        if (/^\d+\.\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
+            items.push(`<li>${parseInlineMarkdown(lines[i].replace(/^\d+\.\s+/, ""))}</li>`);
+            i += 1;
+          }
+          blocks.push(`<ol>${items.join("")}</ol>`);
+          continue;
+        }
+
+        const paragraph = [];
+        while (
+          i < lines.length &&
+          lines[i].trim() &&
+          !/^(#{1,6})\s+/.test(lines[i]) &&
+          !/^(```|~~~)/.test(lines[i].trim()) &&
+          !/^>\s?/.test(lines[i]) &&
+          !/^[-*+]\s+/.test(lines[i]) &&
+          !/^\d+\.\s+/.test(lines[i]) &&
+          !/^(-{3,}|\*{3,}|_{3,})$/.test(lines[i].trim()) &&
+          !(i + 1 < lines.length && /^\|?(.+\|)+.+\|?$/.test(lines[i].trim()) && isTableDivider(lines[i + 1]))
+        ) {
+          paragraph.push(lines[i].trim());
+          i += 1;
+        }
+        blocks.push(`<p>${parseInlineMarkdown(paragraph.join(" "))}</p>`);
+      }
+
+      return blocks.join("\n");
+    }
+
+    function highlightTextNodes(root, query) {
+      const term = query.trim();
+      if (!term) return;
+      const regex = new RegExp(escapeRegExp(term), "gi");
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          if (!node.nodeValue || !regex.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+          regex.lastIndex = 0;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach((node) => {
+        const fragment = document.createDocumentFragment();
+        const text = node.nodeValue;
+        let lastIndex = 0;
+        text.replace(regex, (match, offset) => {
+          if (offset > lastIndex) fragment.appendChild(document.createTextNode(text.slice(lastIndex, offset)));
+          const mark = document.createElement("mark");
+          mark.textContent = match;
+          fragment.appendChild(mark);
+          lastIndex = offset + match.length;
+          return match;
+        });
+        if (lastIndex < text.length) fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+        node.parentNode.replaceChild(fragment, node);
+      });
+    }
+
+    function renderMarkdown(showSuccess = false) {
+      const content = els.mainInput.value;
+      const query = els.searchInput.value.trim();
+      els.viewer.className = "viewer markdown-viewer";
+      updateInputStats();
+
+      if (!content.trim()) {
+        els.viewer.innerHTML = `<article class="markdown-page"><div class="empty-state">Paste Markdown on the left, then render it here.</div></article>`;
+        setOutputMeta("Markdown", "Lines: 0", 0);
+        setMessage("");
+        return;
+      }
+
+      try {
+        els.viewer.innerHTML = `<article class="markdown-page"><div class="markdown-body">${renderMarkdownToHtml(content)}</div></article>`;
+        highlightTextNodes(els.viewer.querySelector(".markdown-body"), query);
+        const lines = content.split(/\r?\n/).length;
+        const words = content.trim().split(/\s+/).filter(Boolean).length;
+        setOutputMeta("Markdown", `${lines} lines / ${words} words`, countMatches(content, query));
+        if (showSuccess) setMessage("Markdown rendered.");
+      } catch (error) {
+        els.viewer.innerHTML = `<article class="markdown-page"><div class="empty-state">Preview could not be rendered.</div></article>`;
+        setOutputMeta("Markdown", "Lines: 0", 0);
+        setMessage(`Markdown render error: ${error.message}`, "error");
+      }
+    }
+
+    async function writeClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const helper = document.createElement("textarea");
+      helper.value = text;
+      helper.setAttribute("readonly", "");
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.select();
+      document.execCommand("copy");
+      helper.remove();
+    }
+
+    async function copyJson() {
+      try {
+        const formatted = JSON.stringify(parseJsonFromEditor(), null, 2);
+        await writeClipboard(formatted);
+        setMessage("Formatted JSON copied.");
+      } catch (error) {
+        setMessage("Cannot copy invalid JSON.", "error");
+      }
+    }
+
+    async function copyMarkdown() {
+      try {
+        await writeClipboard(els.mainInput.value);
+        setMessage("Markdown copied.");
+      } catch (error) {
+        setMessage("Unable to copy Markdown.", "error");
+      }
+    }
+
+    function clearSearch() {
+      els.searchInput.value = "";
+      if (state.mode === "json") {
+        renderJson(false);
+      } else {
+        renderMarkdown(false);
+      }
+    }
+
+    function clearEditor() {
+      els.mainInput.value = "";
+      rememberActiveText();
+      clearSearch();
+      updateInputStats();
+      setMessage("");
+    }
+
+    function loadSample(mode) {
+      els.mainInput.value = mode === "json" ? jsonSample : markdownSample;
+      rememberActiveText();
+      clearSearch();
+      setMessage(`${mode === "json" ? "JSON" : "Markdown"} sample loaded.`);
+    }
+
+    function setMode(mode) {
+      if (state.mode !== mode) rememberActiveText();
+      state.mode = mode;
+      els.searchInput.value = "";
+      const isJson = mode === "json";
+
+      els.jsonModeBtn.classList.toggle("active", isJson);
+      els.markdownModeBtn.classList.toggle("active", !isJson);
+      els.jsonToolbar.classList.toggle("hidden", !isJson);
+      els.markdownToolbar.classList.toggle("hidden", isJson);
+
+      els.modeHint.textContent = isJson
+        ? "Paste JSON, format it, and inspect the tree."
+        : "Paste Markdown and review the rendered document.";
+      els.inputTitle.textContent = isJson ? "JSON Input" : "Markdown Input";
+      els.inputHelp.textContent = isJson ? "Paste or edit JSON here." : "Paste or edit Markdown here.";
+      els.outputTitle.textContent = isJson ? "JSON Tree" : "Markdown Preview";
+      els.outputHelp.textContent = isJson
+        ? "Search keys, paths, summaries, and values."
+        : "Search highlighted rendered text.";
+      els.searchInput.placeholder = isJson ? "Search keys, paths, or values..." : "Search rendered Markdown...";
+      els.mainInput.value = isJson ? state.jsonText : state.markdownText;
+
+      setMessage("");
+      updateInputStats();
+      if (isJson) {
+        renderJson(false);
+      } else {
+        renderMarkdown(false);
+      }
+    }
+
+    function setWrap(enabled) {
+      state.wrap = enabled;
+      els.mainInput.style.whiteSpace = enabled ? "pre-wrap" : "pre";
+      els.mainInput.style.overflowWrap = enabled ? "anywhere" : "normal";
+      els.mainInput.style.overflowX = enabled ? "auto" : "scroll";
+      els.toggleWrapBtn.textContent = enabled ? "Wrap On" : "Wrap Off";
+    }
+
+    function setLayoutColumns(percent) {
+      state.leftPercent = Math.min(68, Math.max(28, percent));
+      els.workspace.style.setProperty("--left-w", `${state.leftPercent}%`);
+    }
+
+    function setupResizer() {
+      let dragging = false;
+
+      els.resizer.addEventListener("pointerdown", (event) => {
+        if (window.innerWidth <= 980) return;
+        dragging = true;
+        els.resizer.classList.add("active");
+        els.resizer.setPointerCapture(event.pointerId);
+        document.body.style.cursor = "col-resize";
+        document.body.style.userSelect = "none";
+        event.preventDefault();
+      });
+
+      els.resizer.addEventListener("pointermove", (event) => {
+        if (!dragging || window.innerWidth <= 980) return;
+        const rect = els.workspace.getBoundingClientRect();
+        const percent = ((event.clientX - rect.left) / rect.width) * 100;
+        setLayoutColumns(percent);
+      });
+
+      function stopDragging(event) {
+        if (!dragging) return;
+        dragging = false;
+        els.resizer.classList.remove("active");
+        if (event.pointerId) {
+          try {
+            els.resizer.releasePointerCapture(event.pointerId);
+          } catch (error) {
+            // Pointer capture can already be released by the browser.
+          }
+        }
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+
+      els.resizer.addEventListener("pointerup", stopDragging);
+      els.resizer.addEventListener("pointercancel", stopDragging);
+
+      els.resizer.addEventListener("keydown", (event) => {
+        if (window.innerWidth <= 980) return;
+        if (event.key === "ArrowLeft") {
+          setLayoutColumns(state.leftPercent - 3);
+          event.preventDefault();
+        }
+        if (event.key === "ArrowRight") {
+          setLayoutColumns(state.leftPercent + 3);
+          event.preventDefault();
+        }
+      });
+    }
+
+    els.jsonModeBtn.addEventListener("click", () => setMode("json"));
+    els.markdownModeBtn.addEventListener("click", () => setMode("markdown"));
+
+    els.renderJsonBtn.addEventListener("click", () => renderJson(true));
+    els.formatJsonBtn.addEventListener("click", formatJson);
+    els.minifyJsonBtn.addEventListener("click", minifyJson);
+    els.copyJsonBtn.addEventListener("click", copyJson);
+    els.sampleJsonBtn.addEventListener("click", () => loadSample("json"));
+    els.expandAllBtn.addEventListener("click", expandAllJson);
+    els.collapseAllBtn.addEventListener("click", collapseAllJson);
+    els.clearJsonBtn.addEventListener("click", clearEditor);
+
+    els.renderMarkdownBtn.addEventListener("click", () => renderMarkdown(true));
+    els.copyMarkdownBtn.addEventListener("click", copyMarkdown);
+    els.sampleMarkdownBtn.addEventListener("click", () => loadSample("markdown"));
+    els.toggleWrapBtn.addEventListener("click", () => {
+      setWrap(!state.wrap);
+      setMessage(state.wrap ? "Line wrap enabled." : "Line wrap disabled.");
+    });
+    els.clearMarkdownBtn.addEventListener("click", clearEditor);
+
+    els.clearSearchBtn.addEventListener("click", clearSearch);
+    els.searchInput.addEventListener("input", scheduleRender);
+    els.mainInput.addEventListener("input", () => {
+      rememberActiveText();
+      updateInputStats();
+      scheduleRender();
+    });
+
+    setupResizer();
+    setLayoutColumns(state.leftPercent);
+    setWrap(true);
+    setMode("json");
+  </script>
+</body>
+</html>
