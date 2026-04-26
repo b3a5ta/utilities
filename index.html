@@ -26,13 +26,161 @@
       --code-bg: #0f172a;
       --code-text: #e2e8f0;
       --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      --body-bg:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 247, 251, 0.96)),
+        radial-gradient(circle at 12% 0%, rgba(15, 118, 110, 0.10), transparent 26%),
+        var(--bg);
+      --topbar-bg: rgba(255, 255, 255, 0.88);
+      --panel-bg: rgba(255, 255, 255, 0.94);
+      --panel-bar-bg: linear-gradient(180deg, #ffffff, var(--surface-2));
+      --heading: #0f172a;
+      --brand-bg: linear-gradient(180deg, #eff6ff, #dbeafe);
+      --brand-border: #bfdbfe;
+      --brand-color: #1d4ed8;
+      --viewer-bg: #fbfdff;
+      --editor-bg: #fbfdff;
+      --markdown-shell: #eef3f8;
+      --markdown-page-bg: #ffffff;
+      --mark-bg: #fff3b0;
+      --mark-text: #111827;
+      --button-hover-border: #93b7e8;
+      --button-hover-shadow: 0 8px 18px rgba(37, 99, 235, 0.10);
+      --active-bg: #0f172a;
+      --active-text: #ffffff;
+      --scroll-track: transparent;
+      --scroll-thumb: #a8b8cc;
+      --scroll-thumb-hover: #7890ad;
+      --json-key: #0f4c81;
+      --json-string: #15803d;
+      --json-number: #b45309;
+      --json-boolean: #7c3aed;
+      --json-null: #dc2626;
+      --json-punctuation: #334155;
+      --primary-border: #1d4ed8;
+      --primary-hover: #1d4ed8;
+      --soft-border: #bfdbfe;
+      --soft-text: #1d4ed8;
+      --danger-border: #fecaca;
+      --danger-hover-border: #fca5a5;
+      --danger-hover-bg: #fee2e2;
+      --success-border: #bbf7d0;
+      --warning-border: #fde68a;
+      --row-hover: rgba(37, 99, 235, 0.06);
+      --tree-border: rgba(100, 116, 139, 0.34);
+      --markdown-h2-border: #e5e7eb;
+      --quote-bg: #f1f8f6;
+      --quote-text: #334155;
+      --inline-code-border: #dbeafe;
+      --inline-code-bg: #eff6ff;
+      --inline-code-text: #1e3a8a;
+      --pre-border: #1e293b;
+      --table-head-bg: #eff6ff;
+      --table-head-text: #0f172a;
+      --resizer-bg: #c7d7eb;
+      --resizer-active: #60a5fa;
       --radius: 8px;
       --topbar-h: 58px;
       --left-w: 42%;
     }
 
+    body.theme-dark {
+      color-scheme: dark;
+      --bg: #0b1220;
+      --surface: #111827;
+      --surface-2: #0f172a;
+      --surface-3: #1e293b;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --border: #273449;
+      --border-strong: #3b4a63;
+      --accent: #60a5fa;
+      --accent-2: #2dd4bf;
+      --accent-soft: #12284a;
+      --danger: #fca5a5;
+      --danger-soft: #3a1218;
+      --success: #86efac;
+      --success-soft: #10291b;
+      --warning: #fde68a;
+      --warning-soft: #33280c;
+      --code-bg: #020617;
+      --code-text: #e2e8f0;
+      --shadow: 0 16px 38px rgba(0, 0, 0, 0.36);
+      --body-bg:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(11, 18, 32, 0.98)),
+        radial-gradient(circle at 12% 0%, rgba(45, 212, 191, 0.12), transparent 28%),
+        var(--bg);
+      --topbar-bg: rgba(15, 23, 42, 0.90);
+      --panel-bg: rgba(17, 24, 39, 0.94);
+      --panel-bar-bg: linear-gradient(180deg, #111827, #0f172a);
+      --heading: #f8fafc;
+      --brand-bg: linear-gradient(180deg, #1e3a5f, #10243f);
+      --brand-border: #315987;
+      --brand-color: #bfdbfe;
+      --viewer-bg: #0b1220;
+      --editor-bg: #08111f;
+      --markdown-shell: #0b1220;
+      --markdown-page-bg: #111827;
+      --mark-bg: #facc15;
+      --mark-text: #111827;
+      --button-hover-border: #60a5fa;
+      --button-hover-shadow: 0 8px 18px rgba(96, 165, 250, 0.12);
+      --active-bg: #e2e8f0;
+      --active-text: #0f172a;
+      --scroll-thumb: #53657f;
+      --scroll-thumb-hover: #7b8da8;
+      --json-key: #93c5fd;
+      --json-string: #86efac;
+      --json-number: #fbbf24;
+      --json-boolean: #c4b5fd;
+      --json-null: #fca5a5;
+      --json-punctuation: #cbd5e1;
+      --primary-border: #60a5fa;
+      --primary-hover: #3b82f6;
+      --soft-border: #315987;
+      --soft-text: #bfdbfe;
+      --danger-border: #7f1d1d;
+      --danger-hover-border: #ef4444;
+      --danger-hover-bg: #451a1f;
+      --success-border: #14532d;
+      --warning-border: #713f12;
+      --row-hover: rgba(96, 165, 250, 0.10);
+      --tree-border: rgba(148, 163, 184, 0.32);
+      --markdown-h2-border: #334155;
+      --quote-bg: #102a27;
+      --quote-text: #d6f5ef;
+      --inline-code-border: #315987;
+      --inline-code-bg: #10243f;
+      --inline-code-text: #bfdbfe;
+      --pre-border: #334155;
+      --table-head-bg: #10243f;
+      --table-head-text: #e2e8f0;
+      --resizer-bg: #3b4a63;
+      --resizer-active: #60a5fa;
+    }
+
     * {
       box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+    }
+
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: var(--scroll-track);
+    }
+
+    *::-webkit-scrollbar-thumb {
+      border: 2px solid var(--scroll-track);
+      border-radius: 999px;
+      background: var(--scroll-thumb);
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background: var(--scroll-thumb-hover);
     }
 
     html,
@@ -44,10 +192,7 @@
     body {
       overflow: hidden;
       color: var(--text);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 247, 251, 0.96)),
-        radial-gradient(circle at 12% 0%, rgba(15, 118, 110, 0.10), transparent 26%),
-        var(--bg);
+      background: var(--body-bg);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       letter-spacing: 0;
     }
@@ -79,8 +224,8 @@
     }
 
     button:hover {
-      border-color: #93b7e8;
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.10);
+      border-color: var(--button-hover-border);
+      box-shadow: var(--button-hover-shadow);
     }
 
     button:focus-visible,
@@ -99,14 +244,15 @@
     }
 
     .topbar {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
       min-width: 0;
-      padding: 9px 12px;
+      padding: 9px 100px 9px 12px;
       border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.88);
+      background: var(--topbar-bg);
       backdrop-filter: blur(12px);
       z-index: 5;
     }
@@ -125,9 +271,9 @@
       display: grid;
       place-items: center;
       border-radius: var(--radius);
-      border: 1px solid #bfdbfe;
-      background: linear-gradient(180deg, #eff6ff, #dbeafe);
-      color: #1d4ed8;
+      border: 1px solid var(--brand-border);
+      background: var(--brand-bg);
+      color: var(--brand-color);
       font-family: Consolas, "SFMono-Regular", Menlo, monospace;
       font-size: 15px;
       font-weight: 800;
@@ -135,11 +281,12 @@
 
     .brand-text {
       min-width: 0;
+      flex: 1 1 auto;
     }
 
     .brand-text h1 {
       margin: 0;
-      color: #0f172a;
+      color: var(--heading);
       font-size: 15px;
       line-height: 1.1;
       font-weight: 760;
@@ -161,6 +308,7 @@
       justify-content: flex-end;
       gap: 10px;
       min-width: 0;
+      flex-wrap: nowrap;
     }
 
     .mode-tabs {
@@ -186,8 +334,32 @@
     }
 
     .mode-tabs button.active {
-      background: #0f172a;
-      color: #ffffff;
+      background: var(--active-bg);
+      color: var(--active-text);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      left: auto;
+      justify-self: end;
+      z-index: 9999;
+      min-width: 76px;
+      padding: 0 9px;
+    }
+
+    .theme-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      background: var(--active-bg);
+      box-shadow: inset 0 0 0 2px var(--surface);
+    }
+
+    body.theme-dark .theme-dot {
+      background: #facc15;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.42);
     }
 
     .workspace {
@@ -209,7 +381,7 @@
       overflow: hidden;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.94);
+      background: var(--panel-bg);
       box-shadow: var(--shadow);
     }
 
@@ -221,7 +393,7 @@
       gap: 10px;
       padding: 8px 10px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #ffffff, var(--surface-2));
+      background: var(--panel-bar-bg);
     }
 
     .panel-title {
@@ -230,7 +402,7 @@
 
     .panel-title h2 {
       margin: 0;
-      color: #0f172a;
+      color: var(--heading);
       font-size: 14px;
       line-height: 1.15;
       font-weight: 760;
@@ -293,7 +465,7 @@
       resize: none;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: #fbfdff;
+      background: var(--editor-bg);
       color: var(--text);
       padding: 12px;
       font-family: Consolas, "SFMono-Regular", Menlo, monospace;
@@ -315,31 +487,31 @@
     }
 
     .btn-primary {
-      border-color: #1d4ed8;
+      border-color: var(--primary-border);
       background: var(--accent);
       color: #ffffff;
     }
 
     .btn-primary:hover {
-      border-color: #1d4ed8;
-      background: #1d4ed8;
+      border-color: var(--primary-border);
+      background: var(--primary-hover);
     }
 
     .btn-soft {
-      border-color: #bfdbfe;
+      border-color: var(--soft-border);
       background: var(--accent-soft);
-      color: #1d4ed8;
+      color: var(--soft-text);
     }
 
     .btn-danger {
-      border-color: #fecaca;
+      border-color: var(--danger-border);
       background: var(--danger-soft);
       color: var(--danger);
     }
 
     .btn-danger:hover {
-      border-color: #fca5a5;
-      background: #fee2e2;
+      border-color: var(--danger-hover-border);
+      background: var(--danger-hover-bg);
     }
 
     .hidden {
@@ -363,19 +535,19 @@
     }
 
     .message .success {
-      border: 1px solid #bbf7d0;
+      border: 1px solid var(--success-border);
       background: var(--success-soft);
       color: var(--success);
     }
 
     .message .error {
-      border: 1px solid #fecaca;
+      border: 1px solid var(--danger-border);
       background: var(--danger-soft);
       color: var(--danger);
     }
 
     .message .note {
-      border: 1px solid #fde68a;
+      border: 1px solid var(--warning-border);
       background: var(--warning-soft);
       color: var(--warning);
     }
@@ -386,7 +558,7 @@
       height: 34px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: #ffffff;
+      background: var(--surface);
       color: var(--text);
       padding: 0 10px;
       font-size: 13px;
@@ -398,7 +570,7 @@
       overflow: auto;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: #fbfdff;
+      background: var(--viewer-bg);
       padding: 10px;
     }
 
@@ -431,12 +603,12 @@
     }
 
     .json-row:hover {
-      background: rgba(37, 99, 235, 0.06);
+      background: var(--row-hover);
     }
 
     .json-children {
       margin-left: 18px;
-      border-left: 1px dashed rgba(100, 116, 139, 0.34);
+      border-left: 1px dashed var(--tree-border);
       padding-left: 8px;
     }
 
@@ -471,29 +643,29 @@
     }
 
     .json-key {
-      color: #0f4c81;
+      color: var(--json-key);
       font-weight: 700;
     }
 
     .json-string {
-      color: #15803d;
+      color: var(--json-string);
     }
 
     .json-number {
-      color: #b45309;
+      color: var(--json-number);
     }
 
     .json-boolean {
-      color: #7c3aed;
+      color: var(--json-boolean);
     }
 
     .json-null {
-      color: #dc2626;
+      color: var(--json-null);
       font-style: italic;
     }
 
     .json-punctuation {
-      color: #334155;
+      color: var(--json-punctuation);
     }
 
     .json-summary {
@@ -503,15 +675,15 @@
     }
 
     mark {
-      background: #fff3b0;
-      color: #111827;
+      background: var(--mark-bg);
+      color: var(--mark-text);
       border-radius: 4px;
       padding: 0 2px;
     }
 
     .markdown-viewer {
       padding: 0;
-      background: #eef3f8;
+      background: var(--markdown-shell);
     }
 
     .markdown-page {
@@ -519,7 +691,7 @@
       min-height: 100%;
       max-width: 920px;
       margin: 0 auto;
-      background: #ffffff;
+      background: var(--markdown-page-bg);
       padding: 22px 24px;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
@@ -546,7 +718,7 @@
     .markdown-body h4,
     .markdown-body h5,
     .markdown-body h6 {
-      color: #0f172a;
+      color: var(--heading);
       line-height: 1.25;
       margin: 1rem 0 0.45rem;
       font-weight: 760;
@@ -562,7 +734,7 @@
     .markdown-body h2 {
       font-size: 1.22rem;
       padding-bottom: 0.18rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid var(--markdown-h2-border);
     }
 
     .markdown-body h3 {
@@ -606,16 +778,16 @@
     .markdown-body blockquote {
       border-left: 4px solid var(--accent-2);
       border-radius: var(--radius);
-      background: #f1f8f6;
-      color: #334155;
+      background: var(--quote-bg);
+      color: var(--quote-text);
       padding: 10px 12px;
     }
 
     .markdown-body code {
-      border: 1px solid #dbeafe;
+      border: 1px solid var(--inline-code-border);
       border-radius: 6px;
-      background: #eff6ff;
-      color: #1e3a8a;
+      background: var(--inline-code-bg);
+      color: var(--inline-code-text);
       padding: 2px 5px;
       font-family: Consolas, "SFMono-Regular", Menlo, monospace;
       font-size: 0.92em;
@@ -623,7 +795,7 @@
 
     .markdown-body pre {
       overflow: auto;
-      border: 1px solid #1e293b;
+      border: 1px solid var(--pre-border);
       border-radius: var(--radius);
       background: var(--code-bg);
       color: var(--code-text);
@@ -659,8 +831,8 @@
     }
 
     .markdown-body th {
-      background: #eff6ff;
-      color: #0f172a;
+      background: var(--table-head-bg);
+      color: var(--table-head-text);
       font-weight: 760;
     }
 
@@ -699,13 +871,13 @@
       width: 4px;
       height: calc(100% - 14px);
       border-radius: 999px;
-      background: #c7d7eb;
+      background: var(--resizer-bg);
       transition: background 0.16s ease, box-shadow 0.16s ease;
     }
 
     .resizer:hover::before,
     .resizer.active::before {
-      background: #60a5fa;
+      background: var(--resizer-active);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.13);
     }
 
@@ -723,12 +895,19 @@
       .topbar {
         position: sticky;
         top: 0;
-        flex-wrap: wrap;
+        grid-template-columns: minmax(0, 1fr) 72px;
       }
 
       .top-actions {
+        grid-column: 1 / -1;
+        grid-row: 2;
         width: 100%;
-        justify-content: flex-start;
+        justify-content: flex-end;
+      }
+
+      .theme-toggle {
+        grid-column: 2;
+        grid-row: 1;
       }
 
       .workspace {
@@ -755,8 +934,17 @@
     }
 
     @media (max-width: 640px) {
+      body,
+      .app {
+        overflow-x: hidden;
+      }
+
       .topbar {
         padding: 8px;
+        position: sticky;
+        width: 100vw;
+        max-width: 100vw;
+        box-sizing: border-box;
       }
 
       .brand {
@@ -767,9 +955,26 @@
         white-space: normal;
       }
 
-      .mode-tabs,
+      .mode-tabs {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+      }
+
       .mode-tabs button {
-        width: 100%;
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 8px;
+        right: auto;
+        left: 64vw;
+        z-index: 9999;
+        flex: 0 0 72px;
+        width: 72px;
+        min-width: 72px;
       }
 
       .workspace {
@@ -808,13 +1013,18 @@
   </style>
 </head>
 <body>
+  <button class="theme-toggle" id="themeToggleBtn" type="button" aria-pressed="false" title="Toggle dark mode">
+    <span class="theme-dot" aria-hidden="true"></span>
+    <span id="themeToggleText">Dark</span>
+  </button>
+
   <main class="app">
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark">{ }</div>
         <div class="brand-text">
           <h1>JSON / Markdown Visualizer</h1>
-          <p id="modeHint">Paste JSON, format it, and inspect the tree.</p>
+          <p id="modeHint" class="hidden"></p>
         </div>
       </div>
 
@@ -898,6 +1108,8 @@
       modeHint: document.getElementById("modeHint"),
       jsonModeBtn: document.getElementById("jsonModeBtn"),
       markdownModeBtn: document.getElementById("markdownModeBtn"),
+      themeToggleBtn: document.getElementById("themeToggleBtn"),
+      themeToggleText: document.getElementById("themeToggleText"),
       inputTitle: document.getElementById("inputTitle"),
       inputHelp: document.getElementById("inputHelp"),
       outputTitle: document.getElementById("outputTitle"),
@@ -999,6 +1211,7 @@ function greet(name) {
       markdownText: markdownSample,
       leftPercent: 42,
       wrap: true,
+      theme: "light",
       renderTimer: null
     };
 
@@ -1304,8 +1517,8 @@ function greet(name) {
       let html = escapeHtml(text);
 
       html = html.replace(/`([^`]+)`/g, (_, code) => {
-        const token = `@@CODE_${codeTokens.length}@@`;
-        codeTokens.push(`<code>${code}</code>`);
+        const token = `@@INLINECODETOKEN${codeTokens.length}@@`;
+        codeTokens.push({ token, html: `<code>${code}</code>` });
         return token;
       });
 
@@ -1321,8 +1534,8 @@ function greet(name) {
       html = html.replace(/_([^_]+)_/g, "<em>$1</em>");
       html = html.replace(/~~([^~]+)~~/g, "<del>$1</del>");
 
-      codeTokens.forEach((token, index) => {
-        html = html.replace(`@@CODE_${index}@@`, token);
+      codeTokens.forEach((item) => {
+        html = html.split(item.token).join(item.html);
       });
       return html;
     }
@@ -1583,9 +1796,8 @@ function greet(name) {
       els.jsonToolbar.classList.toggle("hidden", !isJson);
       els.markdownToolbar.classList.toggle("hidden", isJson);
 
-      els.modeHint.textContent = isJson
-        ? "Paste JSON, format it, and inspect the tree."
-        : "Paste Markdown and review the rendered document.";
+      els.modeHint.textContent = "";
+      els.modeHint.classList.add("hidden");
       els.inputTitle.textContent = isJson ? "JSON Input" : "Markdown Input";
       els.inputHelp.textContent = isJson ? "Paste or edit JSON here." : "Paste or edit Markdown here.";
       els.outputTitle.textContent = isJson ? "JSON Tree" : "Markdown Preview";
@@ -1610,6 +1822,30 @@ function greet(name) {
       els.mainInput.style.overflowWrap = enabled ? "anywhere" : "normal";
       els.mainInput.style.overflowX = enabled ? "auto" : "scroll";
       els.toggleWrapBtn.textContent = enabled ? "Wrap On" : "Wrap Off";
+    }
+
+    function setTheme(theme) {
+      const nextTheme = theme === "dark" ? "dark" : "light";
+      const isDark = nextTheme === "dark";
+      state.theme = nextTheme;
+      document.body.classList.toggle("theme-dark", isDark);
+      els.themeToggleBtn.setAttribute("aria-pressed", String(isDark));
+      els.themeToggleText.textContent = isDark ? "Light" : "Dark";
+      try {
+        localStorage.setItem("visualizer-theme", nextTheme);
+      } catch (error) {
+        // Some local-file browser contexts block storage.
+      }
+    }
+
+    function getInitialTheme() {
+      try {
+        const savedTheme = localStorage.getItem("visualizer-theme");
+        if (savedTheme === "dark" || savedTheme === "light") return savedTheme;
+      } catch (error) {
+        // Fall through to system preference.
+      }
+      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
 
     function setLayoutColumns(percent) {
@@ -1670,6 +1906,9 @@ function greet(name) {
 
     els.jsonModeBtn.addEventListener("click", () => setMode("json"));
     els.markdownModeBtn.addEventListener("click", () => setMode("markdown"));
+    els.themeToggleBtn.addEventListener("click", () => {
+      setTheme(state.theme === "dark" ? "light" : "dark");
+    });
 
     els.renderJsonBtn.addEventListener("click", () => renderJson(true));
     els.formatJsonBtn.addEventListener("click", formatJson);
@@ -1700,6 +1939,7 @@ function greet(name) {
     setupResizer();
     setLayoutColumns(state.leftPercent);
     setWrap(true);
+    setTheme(getInitialTheme());
     setMode("json");
   </script>
 </body>
